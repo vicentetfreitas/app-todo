@@ -8,20 +8,18 @@ import { TaskList } from './../../model/task-list';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements DoCheck {
-  public taskList: Array<TaskList> = [];
+  public taskList: Array<TaskList> = JSON.parse(localStorage.getItem("list") || '[]');
 
   constructor() {}
   ngDoCheck(): void {
-    this.taskList.sort((first, last)=> Number(first.checked)- Number(last.checked));
-
+   this.setLocalStorage();
   }
 
   ngOnInit(): void {}
 
-  public setEmitTaskList(event: string){
+  public setEmitTaskList(event: string) {
     console.log(event);
-    this.taskList.push({task: event, checked: false})
-
+    this.taskList.push({ task: event, checked: false });
   }
   public deleteItemTaskList(event: number) {
     this.taskList.splice(event, 1);
@@ -33,13 +31,20 @@ export class TodoListComponent implements DoCheck {
     }
   }
 
-  public validationInput(event: string, index: number){
-    if(!event.length){
-      const confirm = window.confirm("Task está vazia, deseja Deletar?");
-      if(confirm){
+  public validationInput(event: string, index: number) {
+    if (!event.length) {
+      const confirm = window.confirm('Task está vazia, deseja Deletar?');
+      if (confirm) {
         this.deleteItemTaskList(index);
       }
     }
-
+  }
+  public setLocalStorage(){
+    if (this.taskList) {
+      this.taskList.sort(
+        (first, last) => Number(first.checked) - Number(last.checked)
+      );
+      localStorage.setItem('list', JSON.stringify(this.taskList));
+    }
   }
 }
